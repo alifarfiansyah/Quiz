@@ -83,7 +83,7 @@
 
     <div class="d-flex gap-2">
       <button id="startBtn" class="btn btn-primary btn-lg flex-fill">Start Quiz</button>
-      <button id="debugBtn" class="btn btn-outline-secondary btn-lg flex-fill">Debug</button>
+      <!--     <button id="debugBtn" class="btn btn-outline-secondary btn-lg flex-fill">Debug</button> -->
     </div>
 
     <div id="loginMsg" class="text-danger mt-3 fw-semibold"></div>
@@ -437,7 +437,7 @@ function submitQuiz(auto=false) {
       window.location.reload();
     })
     .catch(() => {
-      alert("Submit failed — see console");
+      // alert("Submit failed — see console");
     });
 }
 
@@ -460,7 +460,7 @@ function sendResult(payload) {
     })
     .catch(err => {
       console.error("⚠️ Network error:", err);
-      alert("Submit failed (network). See console.");
+      // alert("Submit failed (network). See console.");
     });
 }
 </script>
