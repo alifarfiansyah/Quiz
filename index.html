@@ -432,9 +432,10 @@ function submitQuiz(auto=false) {
     answers, score, pass
   };
 
+  const student = $("studentName").value;
   sendResult(payload)
     .then(() => {
-      alert(`Hi ${studentName}, your score: ${score}%, and you ${pass}!`);
+      alert(`Hi ${student}, your score: ${score}%, and you ${pass}!`);
       window.location.reload();
     })
     .catch(() => {
