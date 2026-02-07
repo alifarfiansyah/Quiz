@@ -134,8 +134,8 @@
       </div>
 
       <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-        <button id="startBtn" class="btn btn-success btn-lg shadow w-100">Mulai Kuis</button>
-        <button id="debugBtn" class="btn btn-outline-secondary btn-lg shadow w-100">Load Question</button>
+        <button id="startBtn" class="btn btn-success btn-lg shadow w-100">Mulai Quiz</button>
+        <button id="debugBtn" class="btn btn-outline-secondary btn-lg shadow w-100">Muat Data Quiz</button>
       </div>
 
       <div id="loginMsg" class="text-danger mt-3 text-center fw-semibold"></div>
@@ -183,6 +183,7 @@
         currentIndex = 0,
         timerInterval = null,
         timeLeft = 0,
+        setEndTime = null,
         quizEndTime = null,
         tabViolations = 0,
         isSubmitting = false,
@@ -439,6 +440,8 @@
           return;
         }
 
+        $('loginMsg').textContent = 'Memulai quiz...';
+
         try {
           rawData = await fetchQuizData();
         } catch (e) {
@@ -455,6 +458,20 @@
 
         if (!quizSetting) {
           $('loginMsg').textContent = 'Kode Quiz tidak ditemukan.';
+          return;
+        }
+
+        const now = new Date(),
+          start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null,
+          end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
+
+        if (start && now < start) {
+          $('loginMsg').textContent = 'Quiz belum dimulai.';
+          return;
+        }
+
+        if (end && now > end) {
+          $('loginMsg').textContent = 'Quiz telah selesai.';
           return;
         }
 
@@ -501,7 +518,8 @@
             return;
           }
 
-          quizEndTime = Date.now() + quizSetting.TimeLimit * 60 * 1000;
+          setEndTime = Date.now() + quizSetting.TimeLimit * 60 * 1000;
+          quizEndTime = setEndTime < end ? setEndTime : end;
           tabViolations = 0;
           currentIndex = 0;
         }
@@ -636,6 +654,7 @@
       function sendResult(payload) {
         return fetch(SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
