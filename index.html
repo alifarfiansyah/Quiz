@@ -1,315 +1,322 @@
 <!DOCTYPE html>
-<html lang="id">
-
-<head>
+<html>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Ansor Academy</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-         :root {
-            --green-500: #22c55e;
-            --green-600: #16a34a;
-            --green-700: #15803d;
-        }
-        
-        body {
-            padding-top: 40px;
-            background: #f0fdf4;
-            /* Background hijau sangat pucat */
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-        /* Judul Utama */
-        
-        h3 {
-            font-weight: 800;
-            color: var(--green-700);
-            letter-spacing: -0.5px;
-        }
-        /* Form & Card */
-        
-        .card-custom,
-        .card {
-            border-radius: 1.25rem;
-            border: none;
-            box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.1);
-        }
-        /* Menghilangkan Biru pada Input saat Focus */
-        
-        .form-control:focus {
-            border-color: var(--green-500);
-            box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25);
-        }
-        /* Navigasi Nomor Soal */
-        
-        .nav-qbtn {
-            margin: 4px;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            font-weight: 700;
-            transition: all 0.2s;
-            border: 2px solid #e5e7eb;
-            background: white;
-        }
-        
-        .nav-qbtn:hover {
-            transform: translateY(-3px);
-            border-color: var(--green-500);
-            color: var(--green-600);
-        }
-        
-        .nav-qbtn.answered {
-            background: var(--green-500) !important;
-            border-color: var(--green-600) !important;
-            color: white !important;
-        }
-        
-        .nav-qbtn.unanswered {
-            background: #fee2e2 !important;
-            /* Merah pucat */
-            border-color: #ef4444 !important;
-            color: #b91c1c !important;
-        }
-        /* Menimpa Tombol agar Tidak Biru */
-        
-        .btn-green {
-            background-color: var(--green-500);
-            color: white;
-            border: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-green:hover,
-        .btn-green:focus,
-        .btn-green:active {
-            background-color: var(--green-600) !important;
-            color: white !important;
-            box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.4) !important;
-        }
-        
-        .btn-outline-green {
-            border: 2px solid var(--green-500);
-            color: var(--green-600);
-            font-weight: 600;
-        }
-        
-        .btn-outline-green:hover,
-        .btn-outline-green:focus,
-        .btn-outline-green:active {
-            background-color: var(--green-500) !important;
-            border-color: var(--green-500) !important;
-            color: white !important;
-            box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.3) !important;
-        }
-        
-        .timer {
-            font-weight: 800;
-            background-color: #fef2f2 !important;
-            color: #dc2626 !important;
-            border: 2px solid #fecaca;
-        }
+      :root {
+        --green-500: #22c55e;
+        --green-600: #16a34a;
+        --green-700: #15803d;
+      }
+
+      body {
+        padding-top: 20px;
+        background: #f0fdf4;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+
+      h3 {
+        font-weight: 700;
+        color: var(--green-700);
+      }
+
+      .card-custom {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.1);
+      }
+
+      .form-control:focus {
+        border-color: var(--green-500);
+        box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.25);
+      }
+
+      .nav-qbtn {
+        margin: 4px;
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        font-weight: 700;
+        transition: all 0.2s;
+        border: 2px solid #e5e7eb;
+        background: white;
+      }
+
+      .nav-qbtn:hover {
+        transform: translateY(-3px);
+        border-color: var(--green-500);
+        color: var(--green-600);
+      }
+
+      .nav-qbtn.answered {
+        background: var(--green-500) !important;
+        border-color: var(--green-600) !important;
+        color: white !important;
+      }
+
+      .nav-qbtn.unanswered {
+        background: #fee2e2 !important;
+        border-color: #ef4444 !important;
+        color: #b91c1c !important;
+      }
+
+      .btn-green {
+        background-color: var(--green-500);
+        color: white;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .btn-green:hover,
+      .btn-green:focus,
+      .btn-green:active {
+        background-color: var(--green-600) !important;
+        color: white !important;
+        box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.4) !important;
+      }
+
+      .btn-outline-green {
+        border: 2px solid var(--green-500);
+        color: var(--green-600);
+        font-weight: 600;
+      }
+
+      .btn-outline-green:hover,
+      .btn-outline-green:focus,
+      .btn-outline-green:active {
+        background-color: var(--green-500) !important;
+        border-color: var(--green-500) !important;
+        color: white !important;
+        box-shadow: 0 0 0 0.25rem rgba(34, 197, 94, 0.3) !important;
+      }
+
+      .question-card {
+        padding: 20px;
+        border-radius: 1rem;
+        border: 1px solid #e5ebe5;
+        background: #fff;
+        box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.1);
+      }
+
+      .timer {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #dc3545;
+      }
     </style>
-</head>
+  </head>
 
-<body class="container">
+  <body class="container">
     <div class="text-center mb-5">
-        <h3 class="d-flex align-items-center justify-content-center">
-            <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="🚀" width="40" class="me-2" onerror="this.style.display='none'" /> ANSOR ACADEMY
-        </h3>
+      <h3 class="d-flex align-items-center justify-content-center">
+        <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> ANSOR ACADEMY
+      </h3>
     </div>
 
-    <div id="loginSection" class="card shadow p-4 mb-4 mx-auto" style="max-width: 450px">
-        <div class="mb-3">
-            <label for="studentName" class="form-label fw-bold text-dark">Nama</label>
-            <input id="studentName" class="form-control form-control-lg shadow-sm" placeholder="Ketik nama kamu..." />
-        </div>
+    <!-- Login -->
+    <div id="loginSection" class="card shadow-sm p-4 mb-4 mx-auto" style="max-width: 500px; border-radius: 1rem">
+      <div class="mb-3">
+        <label for="studentName" class="form-label fw-semibold">Nama</label>
+        <input id="studentName" class="form-control form-control-lg" placeholder="Ketik nama kamu..." />
+      </div>
 
-        <div class="mb-4">
-            <label for="quizCodeInput" class="form-label fw-bold text-dark">Kode Quiz</label>
-            <input id="quizCodeInput" class="form-control form-control-lg shadow-sm" placeholder="Contoh: A1934" />
-        </div>
+      <div class="mb-3">
+        <label for="quizCodeInput" class="form-label fw-semibold">Kode Quiz</label>
+        <input id="quizCodeInput" class="form-control form-control-lg" placeholder="Contoh: A1934" />
+      </div>
 
-        <div class="d-grid gap-2">
-            <button id="startBtn" class="btn btn-green btn-lg shadow">Mulai Kuis</button>
-            <button id="debugBtn" class="btn btn-secondary btn-lg shadow">Periksa Data</button>
-        </div>
-        <div id="loginMsg" class="text-danger mt-3 text-center small fw-bold"></div>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+        <button id="startBtn" class="btn btn-success btn-lg shadow w-100">Mulai Kuis</button>
+        <button id="debugBtn" class="btn btn-outline-secondary btn-lg shadow w-100">Load Question</button>
+      </div>
+
+      <div id="loginMsg" class="text-danger mt-3 text-center fw-semibold"></div>
     </div>
 
+    <!-- Quiz -->
     <div id="quizSection" style="display: none">
-        <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm">
-            <h5 id="quizTitle" class="fw-bold text-success mb-0">Quiz</h5>
-            <span class="timer badge rounded-pill px-4 py-2 fs-6" id="timerDisplay">00:00</span>
-        </div>
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 id="quizTitle" class="fw-bold text-success mb-0">Quiz</h5>
+        <span class="timer badge bg-danger fs-6 px-3 py-2 text-light" id="timerDisplay">00:00</span>
+      </div>
 
-        <div id="questionNav" class="mb-4 d-flex flex-wrap gap-2 justify-content-center"></div>
+      <!-- Navigation -->
+      <div id="questionNav" class="mb-3 d-flex flex-wrap gap-2 justify-content-center"></div>
 
-        <div id="questionWrapper" class="card shadow-sm p-4 mb-4 border-0"></div>
+      <!-- Question -->
+      <div id="questionWrapper" class="card shadow-sm p-4 mb-4" style="border-radius: 1rem"></div>
 
-        <div class="d-flex justify-content-between mb-5">
-            <button id="prevBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">← Sebelumnya</button>
-            <button id="nextBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">Berikutnya →</button>
-        </div>
+      <!-- Navigation buttons -->
+      <div class="d-flex justify-content-between mb-4">
+        <button id="prevBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">← Prev</button>
+        <button id="nextBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">Next →</button>
+      </div>
 
-        <div class="text-center">
-            <button id="submitBtn" class="btn btn-green btn-lg px-5 py-3 rounded-pill shadow-lg fw-bold">Kirim Jawaban Sekarang</button>
-        </div>
-        <div id="statusMsg" class="mt-3 text-center fw-semibold"></div>
+      <!-- Submit -->
+      <div class="text-center">
+        <button id="submitBtn" class="btn btn-success btn-lg px-5">Kirim Jawaban</button>
+      </div>
+
+      <div id="statusMsg" class="mt-3 text-center fw-semibold"></div>
     </div>
 
     <script>
-        /* ---------------- CONFIG ---------------- */
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyocX7BFI0v_YTcP3mgedCHQKinP8ZMGLfcyN1rTZC3_ja4cPEftvqLris76DMjqsiVfA/exec';
+      /* ---------------- CONFIG ---------------- */
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyocX7BFI0v_YTcP3mgedCHQKinP8ZMGLfcyN1rTZC3_ja4cPEftvqLris76DMjqsiVfA/exec';
 
-        /* ---------------- STATE ---------------- */
-        let rawData = null,
-            quizSetting = null,
-            quizQuestions = [],
-            currentIndex = 0,
-            timerInterval = null,
-            timeLeft = 0;
+      /* ---------------- STATE ---------------- */
+      let rawData = null,
+        quizSetting = null,
+        quizQuestions = [],
+        currentIndex = 0,
+        timerInterval = null,
+        timeLeft = 0;
 
-        /* ---------------- HELPERS ---------------- */
-        const $ = (id) => document.getElementById(id);
+      /* ---------------- HELPERS ---------------- */
+      const $ = (id) => document.getElementById(id);
 
-        const fmtTime = (s) => {
-            s = Math.max(0, s | 0);
-            const m = (s / 60) | 0,
-                sec = s % 60;
-            return `${m}:${sec < 10 ? '0' + sec : sec}`;
+      const fmtTime = (s) => {
+        s = Math.max(0, s | 0);
+        const m = (s / 60) | 0,
+          sec = s % 60;
+        return `${m}:${sec < 10 ? '0' + sec : sec}`;
+      };
+
+      const shuffle = (arr) =>
+        arr
+          .map((v) => [Math.random(), v])
+          .sort((a, b) => a[0] - b[0])
+          .map((x) => x[1]);
+
+      async function fetchQuizData() {
+        const res = await fetch(SCRIPT_URL + '?action=getQuizData', {
+          cache: 'no-store',
+        });
+        if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+        return await res.json();
+      }
+
+      function optionKeys(q) {
+        return Object.keys(q)
+          .filter((k) => /^Option\d+$/i.test(k) && q[k])
+          .sort((a, b) => parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, '')));
+      }
+
+      /* ---------------- SELECTION ---------------- */
+      function selectWithQuotas(pool, setting) {
+        const quotas = {
+          Hard: +setting.Hard || 0,
+          Medium: +setting.Medium || 0,
+          Easy: +setting.Easy || 0,
         };
 
-        const shuffle = (arr) =>
-            arr
-            .map((v) => [Math.random(), v])
-            .sort((a, b) => a[0] - b[0])
-            .map((x) => x[0]);
+        const byDiff = {
+          Hard: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'hard')),
+          Medium: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'medium')),
+          Easy: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'easy')),
+        };
 
-        async function fetchQuizData() {
-            const res = await fetch(SCRIPT_URL + '?action=getQuizData', {
-                cache: 'no-store',
-            });
-            if (!res.ok) throw new Error('Fetch failed: ' + res.status);
-            return await res.json();
+        const pickExact = (arr, n) => arr.splice(0, Math.min(n, arr.length));
+
+        const selected = [];
+        const gotHard = pickExact(byDiff.Hard, quotas.Hard);
+        selected.push(...gotHard);
+        const gotMed = pickExact(byDiff.Medium, quotas.Medium);
+        selected.push(...gotMed);
+        const gotEasy = pickExact(byDiff.Easy, quotas.Easy);
+        selected.push(...gotEasy);
+
+        let shortHard = quotas.Hard - gotHard.length,
+          shortMed = quotas.Medium - gotMed.length,
+          shortEasy = quotas.Easy - gotEasy.length;
+
+        if (shortHard > 0) {
+          const fillM = pickExact(byDiff.Medium, shortHard);
+          selected.push(...fillM);
+          shortHard -= fillM.length;
+
+          if (shortHard > 0) {
+            const fillE = pickExact(byDiff.Easy, shortHard);
+            selected.push(...fillE);
+          }
         }
 
-        function optionKeys(q) {
-            return Object.keys(q)
-                .filter((k) => /^Option\d+$/i.test(k) && q[k])
-                .sort((a, b) => parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, '')));
+        if (shortMed > 0) {
+          const fillE = pickExact(byDiff.Easy, shortMed);
+          selected.push(...fillE);
         }
 
-        /* ---------------- SELECTION ---------------- */
-        function selectWithQuotas(pool, setting) {
-            const quotas = {
-                Hard: +setting.Hard || 0,
-                Medium: +setting.Medium || 0,
-                Easy: +setting.Easy || 0,
-            };
+        const selectedSet = new Set(selected.map((o) => o.QuestionID));
+        const remain = pool.filter((q) => !selectedSet.has(q.QuestionID));
 
-            const byDiff = {
-                Hard: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'hard')),
-                Medium: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'medium')),
-                Easy: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'easy')),
-            };
+        const remainingNeeded = (shortHard > 0 ? shortHard : 0) + (shortMed > 0 ? shortMed : 0) + (shortEasy > 0 ? shortEasy : 0);
 
-            const pickExact = (arr, n) => arr.splice(0, Math.min(n, arr.length));
-
-            const selected = [];
-            const gotHard = pickExact(byDiff.Hard, quotas.Hard);
-            selected.push(...gotHard);
-            const gotMed = pickExact(byDiff.Medium, quotas.Medium);
-            selected.push(...gotMed);
-            const gotEasy = pickExact(byDiff.Easy, quotas.Easy);
-            selected.push(...gotEasy);
-
-            let shortHard = quotas.Hard - gotHard.length,
-                shortMed = quotas.Medium - gotMed.length,
-                shortEasy = quotas.Easy - gotEasy.length;
-
-            if (shortHard > 0) {
-                const fillM = pickExact(byDiff.Medium, shortHard);
-                selected.push(...fillM);
-                shortHard -= fillM.length;
-
-                if (shortHard > 0) {
-                    const fillE = pickExact(byDiff.Easy, shortHard);
-                    selected.push(...fillE);
-                }
-            }
-
-            if (shortMed > 0) {
-                const fillE = pickExact(byDiff.Easy, shortMed);
-                selected.push(...fillE);
-            }
-
-            const selectedSet = new Set(selected.map((o) => o.QuestionID));
-            const remain = pool.filter((q) => !selectedSet.has(q.QuestionID));
-
-            const remainingNeeded = (shortHard > 0 ? shortHard : 0) + (shortMed > 0 ? shortMed : 0) + (shortEasy > 0 ? shortEasy : 0);
-
-            if (remainingNeeded > 0 && remain.length > 0) {
-                selected.push(...shuffle(remain).slice(0, remainingNeeded));
-            }
-
-            return shuffle(selected);
+        if (remainingNeeded > 0 && remain.length > 0) {
+          selected.push(...shuffle(remain).slice(0, remainingNeeded));
         }
 
-        /* ---------------- RENDERING ---------------- */
-        function buildNav() {
-            const nav = $('questionNav');
-            nav.innerHTML = '';
+        return shuffle(selected);
+      }
 
-            quizQuestions.forEach((q, i) => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'btn nav-qbtn ' + (q.selected ? 'answered' : 'unanswered');
-                btn.textContent = i + 1;
-                btn.onclick = () => {
-                    currentIndex = i;
-                    renderQuestion();
-                };
-                nav.appendChild(btn);
-            });
+      /* ---------------- RENDERING ---------------- */
+      function buildNav() {
+        const nav = $('questionNav');
+        nav.innerHTML = '';
+
+        quizQuestions.forEach((q, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn nav-qbtn ' + (q.selected ? 'answered' : 'unanswered');
+          btn.textContent = i + 1;
+          btn.onclick = () => {
+            currentIndex = i;
+            renderQuestion();
+          };
+          nav.appendChild(btn);
+        });
+      }
+
+      function updateNavStyles() {
+        Array.from($('questionNav').children).forEach((btn, i) => {
+          btn.classList.toggle('answered', !!quizQuestions[i].selected);
+          btn.classList.toggle('unanswered', !quizQuestions[i].selected);
+        });
+      }
+
+      function renderQuestion() {
+        const q = quizQuestions[currentIndex],
+          wrap = $('questionWrapper');
+
+        if (!q) {
+          wrap.innerHTML = '<div>No question</div>';
+          return;
         }
 
-        function updateNavStyles() {
-            Array.from($('questionNav').children).forEach((btn, i) => {
-                btn.classList.toggle('answered', !!quizQuestions[i].selected);
-                btn.classList.toggle('unanswered', !quizQuestions[i].selected);
-            });
-        }
+        let html = `
 
-        function renderQuestion() {
-            const q = quizQuestions[currentIndex],
-                wrap = $('questionWrapper');
-
-            if (!q) {
-                wrap.innerHTML = '<div>No question</div>';
-                return;
-            }
-
-            let html = `
     <div>
     <div class="mb-2"><strong>${currentIndex + 1}.</strong> ${q.Question || ''}</div>
     <hr/>
   `;
 
-            const opts = optionKeys(q);
+        const opts = optionKeys(q);
 
-            if (opts.length === 0) {
-                html += `<div class="text-muted">No options provided.</div>`;
-            } else {
-                html += `<div>`;
-                opts.forEach((key, idx) => {
-                    const idx1 = idx + 1;
-                    const checked = String(q.selected || '') === String(idx1) ? 'checked' : '';
-                    html += `
+        if (opts.length === 0) {
+          html += `<div class="text-muted">No options provided.</div>`;
+        } else {
+          html += `<div>`;
+          opts.forEach((key, idx) => {
+            const idx1 = idx + 1;
+            const checked = String(q.selected || '') === String(idx1) ? 'checked' : '';
+            html += `
         <div class="form-check mb-2">
           <input class="form-check-input" type="radio" 
             name="answer" id="opt${idx}" value="${idx1}" ${checked}>
@@ -317,228 +324,227 @@
             ${q[key]}
           </label>
         </div>`;
-                });
-                html += `</div>`;
-            }
+          });
+          html += `</div>`;
+        }
 
-            wrap.innerHTML = html;
+        wrap.innerHTML = html;
 
-            if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
 
-            document.querySelectorAll('input[name="answer"]').forEach((inp) => {
-                inp.addEventListener('change', (ev) => {
-                    q.selected = ev.target.value;
-                    updateNavStyles();
-                });
-            });
-
+        document.querySelectorAll('input[name="answer"]').forEach((inp) => {
+          inp.addEventListener('change', (ev) => {
+            q.selected = ev.target.value;
             updateNavStyles();
-        }
-
-        function updateTimer() {
-            $('timerDisplay').textContent = fmtTime(timeLeft);
-        }
-
-        /* ---------------- EVENTS ---------------- */
-        $('debugBtn').addEventListener('click', async() => {
-            try {
-                rawData = await fetchQuizData();
-                //console.log("DEBUG settings:", rawData.settings);
-                //console.log("DEBUG questions:", rawData.questions);
-                $('loginMsg').textContent = 'Loaded.';
-            } catch (e) {
-                console.error(e);
-                $('loginMsg').textContent = e.message;
-            }
+          });
         });
 
-        $('startBtn').addEventListener('click', async() => {
-            const name = $('studentName').value.trim();
-            const code = $('quizCodeInput').value.trim().toUpperCase();
+        updateNavStyles();
+      }
 
-            if (!name) {
-                $('loginMsg').textContent = 'Enter name.';
-                return;
-            }
-            if (!code) {
-                $('loginMsg').textContent = 'Enter quiz code.';
-                return;
-            }
+      function updateTimer() {
+        $('timerDisplay').textContent = fmtTime(timeLeft);
+      }
 
-            try {
-                rawData = await fetchQuizData();
-            } catch (e) {
-                $('loginMsg').textContent = 'Cannot load quiz data: ' + e.message;
-                return;
-            }
+      /* ---------------- EVENTS ---------------- */
+      $('debugBtn').addEventListener('click', async () => {
+        try {
+          rawData = await fetchQuizData();
+          //console.log("DEBUG settings:", rawData.settings);
+          //console.log("DEBUG questions:", rawData.questions);
+          $('loginMsg').textContent = 'Loaded.';
+        } catch (e) {
+          console.error(e);
+          $('loginMsg').textContent = e.message;
+        }
+      });
 
-            quizSetting = (rawData.settings || []).find(
-                (s) =>
-                String(s.Code || '')
-                .toUpperCase()
-                .trim() === code
-            );
+      $('startBtn').addEventListener('click', async () => {
+        const name = $('studentName').value.trim();
+        const code = $('quizCodeInput').value.trim().toUpperCase();
 
-            if (!quizSetting) {
-                $('loginMsg').textContent = 'Quiz code not found.';
-                return;
-            }
+        if (!name) {
+          $('loginMsg').textContent = 'Enter name.';
+          return;
+        }
+        if (!code) {
+          $('loginMsg').textContent = 'Enter quiz code.';
+          return;
+        }
 
-            const now = new Date(),
-                start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null,
-                end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
+        try {
+          rawData = await fetchQuizData();
+        } catch (e) {
+          $('loginMsg').textContent = 'Cannot load quiz data: ' + e.message;
+          return;
+        }
 
-            if (start && now < start) {
-                $('loginMsg').textContent = 'Quiz not started.';
-                return;
-            }
+        quizSetting = (rawData.settings || []).find(
+          (s) =>
+            String(s.Code || '')
+              .toUpperCase()
+              .trim() === code
+        );
 
-            if (end && now > end) {
-                $('loginMsg').textContent = 'Quiz expired.';
-                return;
-            }
+        if (!quizSetting) {
+          $('loginMsg').textContent = 'Quiz code not found.';
+          return;
+        }
 
-            const pool = (rawData.questions || []).filter(
-                (q) =>
-                String(q.QuizCode || '')
-                .toUpperCase()
-                .trim() === code &&
-                String(q.Subject || '')
-                .toUpperCase()
-                .trim() ===
-                String(quizSetting.Subject || '')
+        const now = new Date(),
+          start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null,
+          end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
+
+        if (start && now < start) {
+          $('loginMsg').textContent = 'Quiz not started.';
+          return;
+        }
+
+        if (end && now > end) {
+          $('loginMsg').textContent = 'Quiz expired.';
+          return;
+        }
+
+        const pool = (rawData.questions || []).filter(
+          (q) =>
+            String(q.QuizCode || '')
+              .toUpperCase()
+              .trim() === code &&
+            String(q.Subject || '')
+              .toUpperCase()
+              .trim() ===
+              String(quizSetting.Subject || '')
                 .toUpperCase()
                 .trim() &&
-                String(q.Grade || '') === String(quizSetting.Grade || '')
-            );
+            String(q.Grade || '') === String(quizSetting.Grade || '')
+        );
 
-            if (pool.length === 0) {
-                $('loginMsg').textContent = 'No questions match.';
-                return;
-            }
-
-            quizQuestions = selectWithQuotas(pool, quizSetting);
-
-            if (quizQuestions.length === 0) {
-                $('loginMsg').textContent = 'Selection produced no questions.';
-                return;
-            }
-
-            $('loginSection').style.display = 'none';
-            $('quizSection').style.display = 'block';
-            $('quizTitle').textContent = `${quizSetting.Title || 'Quiz'} (${quizSetting.Subject || ''})`;
-
-            currentIndex = 0;
-            buildNav();
-            renderQuestion();
-
-            const limitSec = (+quizSetting.TimeLimit || 0) * 60;
-            const untilEnd = end ? Math.max(0, ((end - now) / 1000) | 0) : Infinity;
-            timeLeft = Math.min(limitSec || Infinity, untilEnd || Infinity);
-
-            if (!isFinite(timeLeft) || timeLeft <= 0) timeLeft = limitSec > 0 ? limitSec : 600;
-
-            updateTimer();
-            if (timerInterval) clearInterval(timerInterval);
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimer();
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    alert('Time is up — auto-submitting.');
-                    submitQuiz(true);
-                }
-            }, 1000);
-        });
-
-        $('prevBtn').addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderQuestion();
-            }
-        });
-
-        $('nextBtn').addEventListener('click', () => {
-            if (currentIndex < quizQuestions.length - 1) {
-                currentIndex++;
-                renderQuestion();
-            }
-        });
-
-        $('submitBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            submitQuiz(false);
-        });
-
-        /* ---------------- SUBMIT ---------------- */
-        function submitQuiz(auto = false) {
-            if (!auto && !confirm('Submit quiz?')) return;
-
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-
-            const answers = {};
-            const correct = quizQuestions.reduce((acc, q) => {
-                const key = q.QuestionID || 'Q_' + Math.random().toString(36).slice(2, 8);
-                answers[key] = q.selected ? String(q.selected) : null;
-                const expected = q.Answer == null ? null : String(q.Answer);
-                if (answers[key] && expected && answers[key] === expected) return acc + 1;
-                return acc;
-            }, 0);
-
-            const score = quizQuestions.length ? Math.round((100 * correct) / quizQuestions.length) : 0;
-            const pass = score >= (+quizSetting.MinScore || 0) ? 'PASS' : 'FAIL';
-
-            const payload = {
-                studentName: $('studentName').value,
-                quizCode: quizSetting.Code,
-                subject: quizSetting.Subject,
-                answers,
-                score,
-                pass,
-            };
-
-            const student = $('studentName').value;
-            sendResult(payload)
-                .then(() => {
-                    alert(`Hi ${student}, your score: ${score}%, and you ${pass}!`);
-                    window.location.reload();
-                })
-                .catch(() => {
-                    alert('Submit failed — see console');
-                });
+        if (pool.length === 0) {
+          $('loginMsg').textContent = 'No questions match.';
+          return;
         }
 
-        function sendResult(payload) {
-            return fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                })
-                .then((res) => res.text())
-                .then((txt) => {
-                    const data = JSON.parse(txt);
-                    if (data && data.status === 'success') {
-                        console.log('✅ Submit success:', data);
-                    } else {
-                        console.error('❌ Submit error:', data);
-                        throw new Error('Server error');
-                    }
-                })
-                .catch((err) => {
-                    console.error('⚠️ Network error:', err);
-                    // alert("Submit failed (network). See console.");
-                });
+        quizQuestions = selectWithQuotas(pool, quizSetting);
+
+        if (quizQuestions.length === 0) {
+          $('loginMsg').textContent = 'Selection produced no questions.';
+          return;
         }
+
+        $('loginSection').style.display = 'none';
+        $('quizSection').style.display = 'block';
+        $('quizTitle').textContent = `${quizSetting.Title || 'Quiz'} (${quizSetting.Subject || ''})`;
+
+        currentIndex = 0;
+        buildNav();
+        renderQuestion();
+
+        const limitSec = (+quizSetting.TimeLimit || 0) * 60;
+        const untilEnd = end ? Math.max(0, ((end - now) / 1000) | 0) : Infinity;
+        timeLeft = Math.min(limitSec || Infinity, untilEnd || Infinity);
+
+        if (!isFinite(timeLeft) || timeLeft <= 0) timeLeft = limitSec > 0 ? limitSec : 600;
+
+        updateTimer();
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          updateTimer();
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            alert('Time is up — auto-submitting.');
+            submitQuiz(true);
+          }
+        }, 1000);
+      });
+
+      $('prevBtn').addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      });
+
+      $('nextBtn').addEventListener('click', () => {
+        if (currentIndex < quizQuestions.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        }
+      });
+
+      $('submitBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        submitQuiz(false);
+      });
+
+      /* ---------------- SUBMIT ---------------- */
+      function submitQuiz(auto = false) {
+        if (!auto && !confirm('Submit quiz?')) return;
+
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+
+        const answers = {};
+        const correct = quizQuestions.reduce((acc, q) => {
+          const key = q.QuestionID || 'Q_' + Math.random().toString(36).slice(2, 8);
+          answers[key] = q.selected ? String(q.selected) : null;
+          const expected = q.Answer == null ? null : String(q.Answer);
+          if (answers[key] && expected && answers[key] === expected) return acc + 1;
+          return acc;
+        }, 0);
+
+        const score = quizQuestions.length ? Math.round((100 * correct) / quizQuestions.length) : 0;
+        const pass = score >= (+quizSetting.MinScore || 0) ? 'PASS' : 'FAIL';
+
+        const payload = {
+          studentName: $('studentName').value,
+          quizCode: quizSetting.Code,
+          subject: quizSetting.Subject,
+          answers,
+          score,
+          pass,
+        };
+
+        const student = $('studentName').value;
+        sendResult(payload)
+          .then(() => {
+            alert(`Hi ${student}, your score: ${score}%, and you ${pass}!`);
+            window.location.reload();
+          })
+          .catch(() => {
+            alert('Submit failed — see console');
+          });
+      }
+
+      function sendResult(payload) {
+        return fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+          .then((res) => res.text())
+          .then((txt) => {
+            const data = JSON.parse(txt);
+            if (data && data.status === 'success') {
+              console.log('✅ Submit success:', data);
+            } else {
+              console.error('❌ Submit error:', data);
+              throw new Error('Server error');
+            }
+          })
+          .catch((err) => {
+            console.error('⚠️ Network error:', err);
+            // alert("Submit failed (network). See console.");
+          });
+      }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-</body>
-
+  </body>
 </html>
