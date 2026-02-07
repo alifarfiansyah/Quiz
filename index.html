@@ -19,6 +19,7 @@
         body {
             padding-top: 40px;
             background: #f0fdf4;
+            /* Background hijau sangat pucat */
             font-family: 'Inter', system-ui, sans-serif;
         }
         /* Judul Utama */
@@ -36,6 +37,7 @@
             border: none;
             box-shadow: 0 10px 25px -5px rgba(22, 163, 74, 0.1);
         }
+        /* Menghilangkan Biru pada Input saat Focus */
         
         .form-control:focus {
             border-color: var(--green-500);
@@ -68,9 +70,11 @@
         
         .nav-qbtn.unanswered {
             background: #fee2e2 !important;
+            /* Merah pucat */
             border-color: #ef4444 !important;
             color: #b91c1c !important;
         }
+        /* Menimpa Tombol agar Tidak Biru */
         
         .btn-green {
             background-color: var(--green-500);
@@ -121,12 +125,12 @@
 
     <div id="loginSection" class="card shadow p-4 mb-4 mx-auto" style="max-width: 450px">
         <div class="mb-3">
-            <label class="form-label fw-bold text-dark">Nama</label>
+            <label for="studentName" class="form-label fw-bold text-dark">Nama</label>
             <input id="studentName" class="form-control form-control-lg shadow-sm" placeholder="Ketik nama kamu..." />
         </div>
 
         <div class="mb-4">
-            <label class="form-label fw-bold text-dark">Kode Quiz</label>
+            <label for="quizCodeInput" class="form-label fw-bold text-dark">Kode Quiz</label>
             <input id="quizCodeInput" class="form-control form-control-lg shadow-sm" placeholder="Contoh: A1934" />
         </div>
 
