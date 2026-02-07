@@ -7,6 +7,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <style>
       :root {
@@ -246,12 +247,24 @@
 
       const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
 
+      const SALT = 'ANSOR1934';
+
       async function fetchQuizData() {
         const res = await fetch(SCRIPT_URL + '?action=getQuizData', {
           cache: 'no-store',
         });
         if (!res.ok) throw new Error('Fetch failed: ' + res.status);
-        return await res.json();
+        const data = await res.json();
+
+        if (data.questions) {
+          data.questions.forEach((q) => {
+            if (q.Answer) {
+              // Langsung timpa jawaban asli dengan hash
+              q.Answer = CryptoJS.MD5(String(q.Answer) + SALT).toString();
+            }
+          });
+        }
+        return data;
       }
 
       function optionKeys(q) {
@@ -580,9 +593,16 @@
         const answers = {};
         const correct = quizQuestions.reduce((acc, q) => {
           const key = q.QuestionID || 'Q_' + Math.random().toString(36).slice(2, 8);
-          answers[key] = q.selected ? String(q.selected) : null;
-          const expected = q.Answer == null ? null : String(q.Answer);
-          if (answers[key] && expected && answers[key] === expected) return acc + 1;
+          // Simpan jawaban asli siswa (misal: "1") untuk dikirim ke Spreadsheet
+          const studentChoice = q.selected ? String(q.selected) : '';
+          answers[key] = studentChoice;
+
+          // Buat hash dari jawaban siswa untuk dibandingkan dengan q.Answer yang sudah dihash
+          const hashedStudentChoice = studentChoice ? CryptoJS.MD5(studentChoice + SALT).toString() : null;
+
+          if (hashedStudentChoice && q.Answer && hashedStudentChoice === q.Answer) {
+            return acc + 1;
+          }
           return acc;
         }, 0);
 
@@ -616,7 +636,6 @@
       function sendResult(payload) {
         return fetch(SCRIPT_URL, {
           method: 'POST',
-          mode: 'no-cors',
           headers: {
             'Content-Type': 'application/json',
           },
