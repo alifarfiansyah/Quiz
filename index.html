@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Ansor Academy</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Ansor Academy Exam</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -116,7 +116,7 @@
   <body class="container">
     <div class="text-center mb-5">
       <h3 class="d-flex align-items-center justify-content-center">
-        <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> ANSOR ACADEMY
+        <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> ANSOR ACADEMY EXAM
       </h3>
     </div>
 
@@ -151,6 +151,9 @@
       <!-- Navigation -->
       <div id="questionNav" class="mb-3 d-flex flex-wrap gap-2 justify-content-center"></div>
 
+      <!-- Pelanggaran -->
+      <div class="alert alert-danger py-2 mb-3" style="font-size: 0.85rem">⚠️ Pelanggaran: <b id="violationCount">0</b> / 3</div>
+
       <!-- Question -->
       <div id="questionWrapper" class="card shadow-sm p-4 mb-4" style="border-radius: 1rem"></div>
 
@@ -178,10 +181,55 @@
         quizQuestions = [],
         currentIndex = 0,
         timerInterval = null,
-        timeLeft = 0;
+        timeLeft = 0,
+        quizEndTime = null,
+        tabViolations = 0,
+        isSubmitting = false,
+        shuffledOptionsMap = {};
 
       /* ---------------- HELPERS ---------------- */
       const $ = (id) => document.getElementById(id);
+
+      document.addEventListener('contextmenu', (e) => e.preventDefault());
+      document.addEventListener('visibilitychange', () => {
+        // Jika sedang submit atau quiz belum mulai, abaikan
+        if (isSubmitting || quizQuestions.length === 0) return;
+
+        if (document.visibilityState === 'hidden' && quizQuestions.length > 0) {
+          tabViolations++;
+          $('violationCount').innerText = tabViolations;
+          saveProgres(); // Simpan jumlah pelanggaran terbaru
+          if (tabViolations >= 3) {
+            console.warn('Batas pelanggaran tercapai! Sistem mengirim jawaban otomatis.');
+            submitQuiz(true);
+            return; // Berhenti di sini, jangan tampilkan quizSection
+          } else {
+            // PERUBAHAN DI SINI: Peringatan terakhir pada pelanggaran ke-2
+            const msg = tabViolations === 2 ? 'PERINGATAN TERAKHIR! Sekali lagi meninggalkan halaman, jawaban akan otomatis dikirim.' : `Peringatan ${tabViolations}/3: Jangan tinggalkan halaman ujian!`;
+            alert(msg);
+          }
+        }
+      });
+
+      function saveProgres() {
+        const data = {
+          endTime: quizEndTime,
+          currentIndex: currentIndex,
+          violations: tabViolations,
+          // Simpan seluruh array soal, bukan hanya ID dan jawaban
+          questions: quizQuestions,
+          code: $('quizCodeInput').value.toUpperCase(),
+          name: $('studentName').value,
+        };
+        localStorage.setItem('ansor_pro_save', JSON.stringify(data));
+      }
+
+      function loadProgres(currentCode) {
+        const saved = localStorage.getItem('ansor_pro_save');
+        if (!saved) return null;
+        const data = JSON.parse(saved);
+        return data.code === currentCode && Date.now() < data.endTime ? data : null;
+      }
 
       const fmtTime = (s) => {
         s = Math.max(0, s | 0);
@@ -195,6 +243,8 @@
           .map((v) => [Math.random(), v])
           .sort((a, b) => a[0] - b[0])
           .map((x) => x[1]);
+
+      const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
 
       async function fetchQuizData() {
         const res = await fetch(SCRIPT_URL + '?action=getQuizData', {
@@ -302,38 +352,47 @@
     <hr/>
   `;
 
-        const opts = optionKeys(q);
+        // Ambil keys (Option1, Option2, dst)
+        const keys = optionKeys(q);
 
-        if (opts.length === 0) {
+        // Buat urutan acak jika belum ada untuk soal ini
+        if (!shuffledOptionsMap[currentIndex]) {
+          shuffledOptionsMap[currentIndex] = shuffleArray([...keys]);
+        }
+
+        const randomizedKeys = shuffledOptionsMap[currentIndex];
+
+        if (keys.length === 0) {
           html += `<div class="text-muted">Tidak ada jawaban.</div>`;
         } else {
           html += `<div>`;
-          opts.forEach((key, idx) => {
-            const idx1 = idx + 1;
-            const checked = String(q.selected || '') === String(idx1) ? 'checked' : '';
+          randomizedKeys.forEach((key) => {
+            // Ambil angka dari key (misal "Option1" -> "1") untuk value radio
+            const originalIdx = key.replace(/\D/g, '');
+            const checked = String(q.selected || '') === String(originalIdx) ? 'checked' : '';
+
             html += `
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="radio" 
-            name="answer" id="opt${idx}" value="${idx1}" ${checked}>
-          <label class="form-check-label" for="opt${idx}">
-            ${q[key]}
-          </label>
-        </div>`;
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="radio" 
+          name="answer" id="opt${originalIdx}" value="${originalIdx}" ${checked}>
+        <label class="form-check-label" for="opt${originalIdx}">
+          ${q[key]}
+        </label>
+      </div>`;
           });
           html += `</div>`;
         }
 
         wrap.innerHTML = html;
-
         if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
 
         document.querySelectorAll('input[name="answer"]').forEach((inp) => {
           inp.addEventListener('change', (ev) => {
-            q.selected = ev.target.value;
+            q.selected = ev.target.value; // Tetap menyimpan "1", "2", dst
             updateNavStyles();
+            saveProgres();
           });
         });
-
         updateNavStyles();
       }
 
@@ -386,71 +445,90 @@
           return;
         }
 
-        const now = new Date(),
-          start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null,
-          end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
+        // --- LOGIKA PEMULIHAN ATAU ACAK BARU ---
+        const backup = loadProgres(code);
 
-        if (start && now < start) {
-          $('loginMsg').textContent = 'Quiz belum dimulai.';
-          return;
-        }
-
-        if (end && now > end) {
-          $('loginMsg').textContent = 'Quiz telah berakhir.';
-          return;
-        }
-
-        const pool = (rawData.questions || []).filter(
-          (q) =>
-            String(q.QuizCode || '')
-              .toUpperCase()
-              .trim() === code &&
-            String(q.Subject || '')
-              .toUpperCase()
-              .trim() ===
-              String(quizSetting.Subject || '')
+        if (backup && confirm('Ditemukan progres sebelumnya. Lanjutkan?')) {
+          // 1. Ambil data dari penyimpanan browser (SOAL TETAP SAMA)
+          quizQuestions = backup.questions;
+          quizEndTime = backup.endTime;
+          currentIndex = backup.currentIndex;
+          tabViolations = backup.violations;
+        } else {
+          // 2. Jika tidak ada backup, buat baru (SOAL DIACAK)
+          const pool = (rawData.questions || []).filter(
+            (q) =>
+              String(q.QuizCode || '')
                 .toUpperCase()
-                .trim() &&
-            String(q.Grade || '') === String(quizSetting.Grade || '')
-        );
+                .trim() === code &&
+              String(q.Subject || '')
+                .toUpperCase()
+                .trim() ===
+                String(quizSetting.Subject || '')
+                  .toUpperCase()
+                  .trim() &&
+              String(q.Grade || '') === String(quizSetting.Grade || '')
+          );
 
-        if (pool.length === 0) {
-          $('loginMsg').textContent = 'Soal belum siap.';
-          return;
+          if (pool.length === 0) {
+            $('loginMsg').textContent = 'Soal belum tersedia di bank soal.';
+            return;
+          }
+
+          quizQuestions = selectWithQuotas(pool, quizSetting);
+
+          quizQuestions.forEach((q) => {
+            const keys = optionKeys(q);
+            const optionTexts = keys.map((k) => q[k]); // Ambil teks pilihannya
+            q.shuffledOptions = shuffleArray([...optionTexts]); // Simpan versi teracak
+          });
+
+          if (quizQuestions.length === 0) {
+            $('loginMsg').textContent = 'Jumlah soal tidak mencukupi kuota.';
+            return;
+          }
+
+          quizEndTime = Date.now() + quizSetting.TimeLimit * 60 * 1000;
+          tabViolations = 0;
+          currentIndex = 0;
         }
 
-        quizQuestions = selectWithQuotas(pool, quizSetting);
+        const timeRemainingCheck = quizEndTime - Date.now();
 
-        if (quizQuestions.length === 0) {
-          $('loginMsg').textContent = 'Soal belum cukup.';
-          return;
+        if (timeRemainingCheck <= 0) {
+          alert('Maaf, waktu pengerjaan untuk sesi Anda telah berakhir.');
+          // Langsung jalankan fungsi submit atau reset tampilan
+          submitQuiz(true);
+          return; // Berhenti di sini, jangan tampilkan quizSection
         }
 
+        // --- SETUP UI ---
         $('loginSection').style.display = 'none';
         $('quizSection').style.display = 'block';
-        $('quizTitle').textContent = `${quizSetting.Title || 'Quiz'} (${quizSetting.Subject || ''})`;
+        $('quizTitle').textContent = `${quizSetting.Title || 'Quiz'} - ${quizSetting.Subject}`;
+        $('violationCount').innerText = tabViolations;
 
-        currentIndex = 0;
         buildNav();
         renderQuestion();
 
-        const limitSec = (+quizSetting.TimeLimit || 0) * 60;
-        const untilEnd = end ? Math.max(0, ((end - now) / 1000) | 0) : Infinity;
-        timeLeft = Math.min(limitSec || Infinity, untilEnd || Infinity);
-
-        if (!isFinite(timeLeft) || timeLeft <= 0) timeLeft = limitSec > 0 ? limitSec : 600;
-
-        updateTimer();
+        // --- JALANKAN TIMER ---
         if (timerInterval) clearInterval(timerInterval);
-
         timerInterval = setInterval(() => {
-          timeLeft--;
-          updateTimer();
-          if (timeLeft <= 0) {
+          const diff = quizEndTime - Date.now();
+
+          if (diff <= 0) {
             clearInterval(timerInterval);
-            alert('Waktu telah habis — jawaban telah dikumpukan.');
             submitQuiz(true);
+            return;
           }
+
+          const s = Math.floor(diff / 1000);
+          const m = Math.floor(s / 60);
+          const sec = s % 60;
+          $('timerDisplay').textContent = `${m}:${sec.toString().padStart(2, '0')}`;
+
+          // Simpan progres otomatis tiap 15 detik
+          if (s % 15 === 0) saveProgres();
         }, 1000);
       });
 
@@ -473,9 +551,26 @@
         submitQuiz(false);
       });
 
+      window.selectOption = (val) => {
+        quizQuestions[currentIndex].selected = val;
+        renderQuestion();
+        buildNav();
+        saveProgres();
+      };
+
       /* ---------------- SUBMIT ---------------- */
       function submitQuiz(auto = false) {
+        // KUNCI PERTAMA: Jika sedang proses, jangan jalankan lagi
+        if (isSubmitting) return;
+
         if (!auto && !confirm('Kumpulkan Jawaban?')) return;
+
+        // AKTIFKAN KUNCI
+        isSubmitting = true;
+
+        // Matikan semua tombol agar tidak diklik dua kali oleh user
+        $('submitBtn').disabled = true;
+        $('submitBtn').innerText = 'Mengirim...';
 
         if (timerInterval) {
           clearInterval(timerInterval);
@@ -506,10 +601,14 @@
         const student = $('studentName').value;
         sendResult(payload)
           .then(() => {
+            localStorage.removeItem('ansor_pro_save'); // Hapus progres agar tidak loop
             alert(`Hi ${student}, nilaimu adalah: ${score}%, dan kamu dinyatakan ${pass}!`);
             window.location.reload();
           })
           .catch(() => {
+            isSubmitting = false; // Buka kunci jika gagal agar bisa coba lagi
+            $('submitBtn').disabled = false;
+            $('submitBtn').innerText = 'Kirim Jawaban';
             alert('Submit failed — see console');
           });
       }
