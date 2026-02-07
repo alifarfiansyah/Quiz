@@ -218,52 +218,47 @@
           Easy: +setting.Easy || 0,
         };
 
-        const byDiff = {
-          Hard: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'hard')),
-          Medium: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'medium')),
-          Easy: shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'easy')),
-        };
+        const totalTarget = quotas.Hard + quotas.Medium + quotas.Easy;
 
-        const pickExact = (arr, n) => arr.splice(0, Math.min(n, arr.length));
+        // Kelompokkan bank soal berdasarkan kesulitan
+        let poolHard = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'hard'));
+        let poolMed = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'medium'));
+        let poolEasy = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'easy'));
 
-        const selected = [];
-        const gotHard = pickExact(byDiff.Hard, quotas.Hard);
-        selected.push(...gotHard);
-        const gotMed = pickExact(byDiff.Medium, quotas.Medium);
-        selected.push(...gotMed);
-        const gotEasy = pickExact(byDiff.Easy, quotas.Easy);
-        selected.push(...gotEasy);
+        let selected = [];
 
-        let shortHard = quotas.Hard - gotHard.length,
-          shortMed = quotas.Medium - gotMed.length,
-          shortEasy = quotas.Easy - gotEasy.length;
+        // 1. Ambil jatah HARD. Jika kurang, ambil dari Medium. Jika masih kurang, ambil dari Easy.
+        let hardToPick = quotas.Hard;
+        let fromHard = poolHard.splice(0, hardToPick);
+        selected.push(...fromHard);
 
-        if (shortHard > 0) {
-          const fillM = pickExact(byDiff.Medium, shortHard);
-          selected.push(...fillM);
-          shortHard -= fillM.length;
-
-          if (shortHard > 0) {
-            const fillE = pickExact(byDiff.Easy, shortHard);
-            selected.push(...fillE);
+        let shortageHard = hardToPick - fromHard.length;
+        if (shortageHard > 0) {
+          let fromMedForHard = poolMed.splice(0, shortageHard);
+          selected.push(...fromMedForHard);
+          let stillShort = shortageHard - fromMedForHard.length;
+          if (stillShort > 0) {
+            selected.push(...poolEasy.splice(0, stillShort));
           }
         }
 
-        if (shortMed > 0) {
-          const fillE = pickExact(byDiff.Easy, shortMed);
-          selected.push(...fillE);
+        // 2. Ambil jatah MEDIUM. Jika kurang, ambil dari Easy.
+        // (Catatan: jatah Medium bisa berkurang jika sudah terpakai oleh cadangan Hard di atas)
+        let medToPick = quotas.Medium;
+        let fromMed = poolMed.splice(0, medToPick);
+        selected.push(...fromMed);
+
+        let shortageMed = medToPick - fromMed.length;
+        if (shortageMed > 0) {
+          selected.push(...poolEasy.splice(0, shortageMed));
         }
 
-        const selectedSet = new Set(selected.map((o) => o.QuestionID));
-        const remain = pool.filter((q) => !selectedSet.has(q.QuestionID));
+        // 3. Ambil jatah EASY.
+        let easyToPick = quotas.Easy;
+        selected.push(...poolEasy.splice(0, easyToPick));
 
-        const remainingNeeded = (shortHard > 0 ? shortHard : 0) + (shortMed > 0 ? shortMed : 0) + (shortEasy > 0 ? shortEasy : 0);
-
-        if (remainingNeeded > 0 && remain.length > 0) {
-          selected.push(...shuffle(remain).slice(0, remainingNeeded));
-        }
-
-        return shuffle(selected);
+        // Final check: Pastikan tidak melebihi total target dan diacak
+        return shuffle(selected.slice(0, totalTarget));
       }
 
       /* ---------------- RENDERING ---------------- */
@@ -296,7 +291,7 @@
           wrap = $('questionWrapper');
 
         if (!q) {
-          wrap.innerHTML = '<div>No question</div>';
+          wrap.innerHTML = '<div>Tidak ada soal</div>';
           return;
         }
 
@@ -310,7 +305,7 @@
         const opts = optionKeys(q);
 
         if (opts.length === 0) {
-          html += `<div class="text-muted">No options provided.</div>`;
+          html += `<div class="text-muted">Tidak ada jawaban.</div>`;
         } else {
           html += `<div>`;
           opts.forEach((key, idx) => {
@@ -352,7 +347,7 @@
           rawData = await fetchQuizData();
           //console.log("DEBUG settings:", rawData.settings);
           //console.log("DEBUG questions:", rawData.questions);
-          $('loginMsg').textContent = 'Loaded.';
+          $('loginMsg').textContent = 'Quiz siap dimulai.';
         } catch (e) {
           console.error(e);
           $('loginMsg').textContent = e.message;
@@ -364,18 +359,18 @@
         const code = $('quizCodeInput').value.trim().toUpperCase();
 
         if (!name) {
-          $('loginMsg').textContent = 'Enter name.';
+          $('loginMsg').textContent = 'Masukkan nama.';
           return;
         }
         if (!code) {
-          $('loginMsg').textContent = 'Enter quiz code.';
+          $('loginMsg').textContent = 'Masukkan kode quiz.';
           return;
         }
 
         try {
           rawData = await fetchQuizData();
         } catch (e) {
-          $('loginMsg').textContent = 'Cannot load quiz data: ' + e.message;
+          $('loginMsg').textContent = 'Tidak dapat memuat data quiz: ' + e.message;
           return;
         }
 
@@ -387,7 +382,7 @@
         );
 
         if (!quizSetting) {
-          $('loginMsg').textContent = 'Quiz code not found.';
+          $('loginMsg').textContent = 'Kode Quiz tidak ditemukan.';
           return;
         }
 
@@ -396,12 +391,12 @@
           end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
 
         if (start && now < start) {
-          $('loginMsg').textContent = 'Quiz not started.';
+          $('loginMsg').textContent = 'Quiz belum dimulai.';
           return;
         }
 
         if (end && now > end) {
-          $('loginMsg').textContent = 'Quiz expired.';
+          $('loginMsg').textContent = 'Quiz telah berakhir.';
           return;
         }
 
@@ -420,14 +415,14 @@
         );
 
         if (pool.length === 0) {
-          $('loginMsg').textContent = 'No questions match.';
+          $('loginMsg').textContent = 'Soal belum siap.';
           return;
         }
 
         quizQuestions = selectWithQuotas(pool, quizSetting);
 
         if (quizQuestions.length === 0) {
-          $('loginMsg').textContent = 'Selection produced no questions.';
+          $('loginMsg').textContent = 'Soal belum cukup.';
           return;
         }
 
@@ -453,7 +448,7 @@
           updateTimer();
           if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            alert('Time is up — auto-submitting.');
+            alert('Waktu telah habis — jawaban telah dikumpukan.');
             submitQuiz(true);
           }
         }, 1000);
@@ -480,7 +475,7 @@
 
       /* ---------------- SUBMIT ---------------- */
       function submitQuiz(auto = false) {
-        if (!auto && !confirm('Submit quiz?')) return;
+        if (!auto && !confirm('Kumpulkan Jawaban?')) return;
 
         if (timerInterval) {
           clearInterval(timerInterval);
@@ -497,7 +492,7 @@
         }, 0);
 
         const score = quizQuestions.length ? Math.round((100 * correct) / quizQuestions.length) : 0;
-        const pass = score >= (+quizSetting.MinScore || 0) ? 'PASS' : 'FAIL';
+        const pass = score >= (+quizSetting.MinScore || 0) ? 'LULUS' : 'BELUM LULUS';
 
         const payload = {
           studentName: $('studentName').value,
@@ -511,7 +506,7 @@
         const student = $('studentName').value;
         sendResult(payload)
           .then(() => {
-            alert(`Hi ${student}, your score: ${score}%, and you ${pass}!`);
+            alert(`Hi ${student}, nilaimu adalah: ${score}%, dan kamu dinyatakan ${pass}!`);
             window.location.reload();
           })
           .catch(() => {
