@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Ansor Academy Exam</title>
+    <title>Pelatihan Akhir Pekan</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
@@ -20,9 +20,10 @@
         padding-top: 20px;
         background: #f0fdf4;
         font-family: 'Inter', system-ui, sans-serif;
+        margin-bottom: auto;
       }
 
-      h3 {
+      h4 {
         font-weight: 700;
         color: var(--green-700);
       }
@@ -116,9 +117,9 @@
 
   <body class="container">
     <div class="text-center mb-5">
-      <h3 class="d-flex align-items-center justify-content-center">
-        <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> ANSOR ACADEMY EXAM
-      </h3>
+      <h4 class="d-flex align-items-center justify-content-center">
+        <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> PELATIHAN AKHIR PEKAN
+      </h4>
     </div>
 
     <!-- Login -->
@@ -172,6 +173,45 @@
       <div id="statusMsg" class="mt-3 text-center fw-semibold"></div>
     </div>
 
+    <div id="resultSection" style="display: none">
+      <div class="card card-custom shadow-sm p-2 text-center">
+        <div class="mb-2">
+          <p class="text-muted mb-3">Quiz dengan kode: <strong id="kodeQuiz">-</strong> telah selesai.</p>
+        </div>
+
+        <div class="mb-2">
+          <h3 id="studentNameResult" class="fw-bold">Nama</h3>
+          <p class="text-muted">Telah menyelesaikan quiz dengan hasil akhir:</p>
+          <div id="passBadge" class="badge rounded-pill fs-6 px-4 py-2 mt-2">STATUS</div>
+        </div>
+
+        <hr />
+
+        <div class="row g-3 text-center mt-2">
+          <div class="col-6">
+            <div class="p-2 border rounded shadow-sm bg-light">
+              <small class="text-muted d-block">Benar</small>
+              <strong id="correctCount" class="fs-4">0</strong><strong class="fs-4">/</strong><strong id="totalCount" class="fs-4">0</strong>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-2 border rounded shadow-sm bg-light">
+              <small class="text-muted d-block">Nilai</small>
+              <strong id="finalScore" class="fs-4">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="window.location.reload()" class="btn btn-success btn-lg w-100 mt-5 rounded-pill">Selesai & Keluar</button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="text-center">
+        <span class="text-muted">© <span id="year"></span> PR. GP Ansor Desa Ngepung.</span>
+      </div>
+    </footer>
+
     <script>
       /* ---------------- CONFIG ---------------- */
       const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyocX7BFI0v_YTcP3mgedCHQKinP8ZMGLfcyN1rTZC3_ja4cPEftvqLris76DMjqsiVfA/exec';
@@ -187,10 +227,13 @@
         quizEndTime = null,
         tabViolations = 0,
         isSubmitting = false,
-        shuffledOptionsMap = {};
+        shuffledOptionsMap = {},
+        startTime = null;
 
       /* ---------------- HELPERS ---------------- */
       const $ = (id) => document.getElementById(id);
+
+      document.getElementById('year').textContent = new Date().getFullYear();
 
       document.addEventListener('contextmenu', (e) => e.preventDefault());
       document.addEventListener('visibilitychange', () => {
@@ -461,16 +504,14 @@
           return;
         }
 
-        const now = new Date(),
-          start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null,
-          end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null;
+        (startTime = new Date()), (start = quizSetting.StartDate ? new Date(quizSetting.StartDate) : null), (end = quizSetting.EndDate ? new Date(quizSetting.EndDate) : null);
 
-        if (start && now < start) {
+        if (start && startTime < start) {
           $('loginMsg').textContent = 'Quiz belum dimulai.';
           return;
         }
 
-        if (end && now > end) {
+        if (end && startTime > end) {
           $('loginMsg').textContent = 'Quiz telah selesai.';
           return;
         }
@@ -634,14 +675,34 @@
           answers,
           score,
           pass,
+          startTime,
         };
 
         const student = $('studentName').value;
         sendResult(payload)
           .then(() => {
             localStorage.removeItem('ansor_pro_save'); // Hapus progres agar tidak loop
-            alert(`Hi ${student}, nilaimu adalah: ${score}%, dan kamu dinyatakan ${pass}!`);
-            window.location.reload();
+            // TAMPILKAN HALAMAN HASIL
+            $('quizSection').style.display = 'none';
+            $('resultSection').style.display = 'block';
+
+            // Isi Data Ke Halaman Hasil
+            $('studentNameResult').innerText = payload.studentName;
+            $('correctCount').innerText = correct;
+            $('totalCount').innerText = quizQuestions.length;
+            $('kodeQuiz').innerText = quizSetting.Code;
+
+            const finalscore = $('finalScore');
+            finalscore.innerText = score;
+            finalscore.className = pass === 'LULUS' ? 'fs-4 text-success' : 'fs-4 text-danger';
+
+            const correctcount = $('correctCount');
+            correctcount.innerText = correct;
+            correctcount.className = pass === 'LULUS' ? 'fs-4 text-success' : 'fs-4 text-danger';
+
+            const badge = $('passBadge');
+            badge.innerText = pass;
+            badge.className = pass === 'LULUS' ? 'badge rounded-pill fs-6 px-4 py-2 mt-2 bg-success' : 'badge rounded-pill fs-6 px-4 py-2 mt-2 bg-danger';
           })
           .catch(() => {
             isSubmitting = false; // Buka kunci jika gagal agar bisa coba lagi
@@ -677,6 +738,6 @@
       }
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   </body>
 </html>
