@@ -116,6 +116,7 @@
   </head>
 
   <body class="container">
+    <!-- Header -->
     <div class="text-center mb-5">
       <h4 class="d-flex align-items-center justify-content-center">
         <img src="https://raw.githubusercontent.com/alifarfiansyah/Quiz/refs/heads/main/ansor.png" alt="logo" width="40" class="me-2" onerror="this.style.display='none'" /> PELATIHAN AKHIR PEKAN
@@ -144,28 +145,22 @@
 
     <!-- Quiz -->
     <div id="quizSection" style="display: none">
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 id="quizTitle" class="fw-bold text-success mb-0">Quiz</h5>
         <span class="timer badge bg-danger fs-6 px-3 py-2 text-light" id="timerDisplay">00:00</span>
       </div>
 
-      <!-- Navigation -->
       <div id="questionNav" class="mb-3 d-flex flex-wrap gap-2 justify-content-center"></div>
 
-      <!-- Pelanggaran -->
       <div class="alert alert-danger py-2 mb-3" style="font-size: 0.85rem">⚠️ Pelanggaran: <b id="violationCount">0</b> / 3</div>
 
-      <!-- Question -->
       <div id="questionWrapper" class="card shadow-sm p-4 mb-4" style="border-radius: 1rem"></div>
 
-      <!-- Navigation buttons -->
       <div class="d-flex justify-content-between mb-4">
         <button id="prevBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">← Prev</button>
         <button id="nextBtn" class="btn btn-outline-green px-4 rounded-pill shadow-sm">Next →</button>
       </div>
 
-      <!-- Submit -->
       <div class="text-center">
         <button id="submitBtn" class="btn btn-success btn-lg px-5">Kirim Jawaban</button>
       </div>
@@ -173,6 +168,7 @@
       <div id="statusMsg" class="mt-3 text-center fw-semibold"></div>
     </div>
 
+    <!-- Result -->
     <div id="resultSection" style="display: none">
       <div class="card shadow-sm p-4 mb-4 mx-auto text-center">
         <div class="mb-2">
@@ -206,6 +202,7 @@
       </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
       <div class="text-center">
         <span class="text-muted">© <span id="year"></span> PR. GP Ansor Desa Ngepung.</span>
@@ -228,7 +225,8 @@
         tabViolations = 0,
         isSubmitting = false,
         shuffledOptionsMap = {},
-        startTime = null;
+        startTime = null,
+        submitTime = null;
 
       /* ---------------- HELPERS ---------------- */
       const $ = (id) => document.getElementById(id);
@@ -237,19 +235,17 @@
 
       document.addEventListener('contextmenu', (e) => e.preventDefault());
       document.addEventListener('visibilitychange', () => {
-        // Jika sedang submit atau quiz belum mulai, abaikan
         if (isSubmitting || quizQuestions.length === 0) return;
 
         if (document.visibilityState === 'hidden' && quizQuestions.length > 0) {
           tabViolations++;
           $('violationCount').innerText = tabViolations;
-          saveProgres(); // Simpan jumlah pelanggaran terbaru
+          saveProgres();
           if (tabViolations >= 3) {
             console.warn('Batas pelanggaran tercapai! Sistem mengirim jawaban otomatis.');
             submitQuiz(true);
-            return; // Berhenti di sini, jangan tampilkan quizSection
+            return;
           } else {
-            // PERUBAHAN DI SINI: Peringatan terakhir pada pelanggaran ke-2
             const msg = tabViolations === 2 ? 'PERINGATAN TERAKHIR! Sekali lagi meninggalkan halaman, jawaban akan otomatis dikirim.' : `Peringatan ${tabViolations}/3: Jangan tinggalkan halaman ujian!`;
             alert(msg);
           }
@@ -261,7 +257,6 @@
           endTime: quizEndTime,
           currentIndex: currentIndex,
           violations: tabViolations,
-          // Simpan seluruh array soal, bukan hanya ID dan jawaban
           questions: quizQuestions,
           code: $('quizCodeInput').value.toUpperCase(),
           name: $('studentName').value,
@@ -303,7 +298,6 @@
         if (data.questions) {
           data.questions.forEach((q) => {
             if (q.Answer) {
-              // Langsung timpa jawaban asli dengan hash
               q.Answer = CryptoJS.MD5(String(q.Answer) + SALT).toString();
             }
           });
@@ -327,14 +321,12 @@
 
         const totalTarget = quotas.Hard + quotas.Medium + quotas.Easy;
 
-        // Kelompokkan bank soal berdasarkan kesulitan
         let poolHard = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'hard'));
         let poolMed = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'medium'));
         let poolEasy = shuffle(pool.filter((q) => (q.Difficulty || '').toLowerCase() === 'easy'));
 
         let selected = [];
 
-        // 1. Ambil jatah HARD. Jika kurang, ambil dari Medium. Jika masih kurang, ambil dari Easy.
         let hardToPick = quotas.Hard;
         let fromHard = poolHard.splice(0, hardToPick);
         selected.push(...fromHard);
@@ -349,8 +341,6 @@
           }
         }
 
-        // 2. Ambil jatah MEDIUM. Jika kurang, ambil dari Easy.
-        // (Catatan: jatah Medium bisa berkurang jika sudah terpakai oleh cadangan Hard di atas)
         let medToPick = quotas.Medium;
         let fromMed = poolMed.splice(0, medToPick);
         selected.push(...fromMed);
@@ -360,11 +350,9 @@
           selected.push(...poolEasy.splice(0, shortageMed));
         }
 
-        // 3. Ambil jatah EASY.
         let easyToPick = quotas.Easy;
         selected.push(...poolEasy.splice(0, easyToPick));
 
-        // Final check: Pastikan tidak melebihi total target dan diacak
         return shuffle(selected.slice(0, totalTarget));
       }
 
@@ -409,10 +397,8 @@
     <hr/>
   `;
 
-        // Ambil keys (Option1, Option2, dst)
         const keys = optionKeys(q);
 
-        // Buat urutan acak jika belum ada untuk soal ini
         if (!shuffledOptionsMap[currentIndex]) {
           shuffledOptionsMap[currentIndex] = shuffleArray([...keys]);
         }
@@ -424,7 +410,6 @@
         } else {
           html += `<div>`;
           randomizedKeys.forEach((key) => {
-            // Ambil angka dari key (misal "Option1" -> "1") untuk value radio
             const originalIdx = key.replace(/\D/g, '');
             const checked = String(q.selected || '') === String(originalIdx) ? 'checked' : '';
 
@@ -445,7 +430,7 @@
 
         document.querySelectorAll('input[name="answer"]').forEach((inp) => {
           inp.addEventListener('change', (ev) => {
-            q.selected = ev.target.value; // Tetap menyimpan "1", "2", dst
+            q.selected = ev.target.value;
             updateNavStyles();
             saveProgres();
           });
@@ -461,8 +446,6 @@
       $('debugBtn').addEventListener('click', async () => {
         try {
           rawData = await fetchQuizData();
-          //console.log("DEBUG settings:", rawData.settings);
-          //console.log("DEBUG questions:", rawData.questions);
           $('loginMsg').textContent = 'Quiz siap dimulai.';
         } catch (e) {
           console.error(e);
@@ -516,17 +499,14 @@
           return;
         }
 
-        // --- LOGIKA PEMULIHAN ATAU ACAK BARU ---
         const backup = loadProgres(code);
 
         if (backup && confirm('Ditemukan progres sebelumnya. Lanjutkan?')) {
-          // 1. Ambil data dari penyimpanan browser (SOAL TETAP SAMA)
           quizQuestions = backup.questions;
           quizEndTime = backup.endTime;
           currentIndex = backup.currentIndex;
           tabViolations = backup.violations;
         } else {
-          // 2. Jika tidak ada backup, buat baru (SOAL DIACAK)
           const pool = (rawData.questions || []).filter(
             (q) =>
               String(q.QuizCode || '')
@@ -550,8 +530,8 @@
 
           quizQuestions.forEach((q) => {
             const keys = optionKeys(q);
-            const optionTexts = keys.map((k) => q[k]); // Ambil teks pilihannya
-            q.shuffledOptions = shuffleArray([...optionTexts]); // Simpan versi teracak
+            const optionTexts = keys.map((k) => q[k]);
+            q.shuffledOptions = shuffleArray([...optionTexts]);
           });
 
           if (quizQuestions.length === 0) {
@@ -569,9 +549,8 @@
 
         if (timeRemainingCheck <= 0) {
           alert('Maaf, waktu pengerjaan untuk sesi Anda telah berakhir.');
-          // Langsung jalankan fungsi submit atau reset tampilan
           submitQuiz(true);
-          return; // Berhenti di sini, jangan tampilkan quizSection
+          return;
         }
 
         // --- SETUP UI ---
@@ -583,7 +562,6 @@
         buildNav();
         renderQuestion();
 
-        // --- JALANKAN TIMER ---
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
           const diff = quizEndTime - Date.now();
@@ -599,8 +577,7 @@
           const sec = s % 60;
           $('timerDisplay').textContent = `${m}:${sec.toString().padStart(2, '0')}`;
 
-          // Simpan progres otomatis tiap 15 detik
-          if (s % 15 === 0) saveProgres();
+          if (s % 5 === 0) saveProgres();
         }, 1000);
       });
 
@@ -632,15 +609,12 @@
 
       /* ---------------- SUBMIT ---------------- */
       function submitQuiz(auto = false) {
-        // KUNCI PERTAMA: Jika sedang proses, jangan jalankan lagi
         if (isSubmitting) return;
 
         if (!auto && !confirm('Kumpulkan Jawaban?')) return;
 
-        // AKTIFKAN KUNCI
         isSubmitting = true;
 
-        // Matikan semua tombol agar tidak diklik dua kali oleh user
         $('submitBtn').disabled = true;
         $('submitBtn').innerText = 'Mengirim...';
 
@@ -649,14 +623,14 @@
           timerInterval = null;
         }
 
+        submitTime = new Date();
+
         const answers = {};
         const correct = quizQuestions.reduce((acc, q) => {
           const key = q.QuestionID || 'Q_' + Math.random().toString(36).slice(2, 8);
-          // Simpan jawaban asli siswa (misal: "1") untuk dikirim ke Spreadsheet
           const studentChoice = q.selected ? String(q.selected) : '';
           answers[key] = studentChoice;
 
-          // Buat hash dari jawaban siswa untuk dibandingkan dengan q.Answer yang sudah dihash
           const hashedStudentChoice = studentChoice ? CryptoJS.MD5(studentChoice + SALT).toString() : null;
 
           if (hashedStudentChoice && q.Answer && hashedStudentChoice === q.Answer) {
@@ -676,17 +650,17 @@
           score,
           pass,
           startTime,
+          submitTime,
+          tabViolations,
         };
 
         const student = $('studentName').value;
         sendResult(payload)
           .then(() => {
-            localStorage.removeItem('ansor_pro_save'); // Hapus progres agar tidak loop
-            // TAMPILKAN HALAMAN HASIL
+            localStorage.removeItem('ansor_pro_save');
             $('quizSection').style.display = 'none';
             $('resultSection').style.display = 'block';
 
-            // Isi Data Ke Halaman Hasil
             $('studentNameResult').innerText = payload.studentName;
             $('correctCount').innerText = correct;
             $('totalCount').innerText = quizQuestions.length;
@@ -705,7 +679,7 @@
             badge.className = pass === 'LULUS' ? 'badge rounded-pill fs-6 px-4 py-2 mt-2 bg-success' : 'badge rounded-pill fs-6 px-4 py-2 mt-2 bg-danger';
           })
           .catch(() => {
-            isSubmitting = false; // Buka kunci jika gagal agar bisa coba lagi
+            isSubmitting = false;
             $('submitBtn').disabled = false;
             $('submitBtn').innerText = 'Kirim Jawaban';
             alert('Submit failed — see console');
@@ -733,7 +707,6 @@
           })
           .catch((err) => {
             console.error('⚠️ Network error:', err);
-            // alert("Submit failed (network). See console.");
           });
       }
     </script>
